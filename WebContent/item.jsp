@@ -1,78 +1,88 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="dao.ItemDAO, models.Item" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Item Details | Campus Connect</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #f8f9fa;
-    }
-
-    .item-image {
-      max-width: 100%;
-      border-radius: 10px;
-    }
-
-    .card-info {
-      background-color: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-
-    .user-avatar {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin-right: 15px;
-    }
-
-    .btn-contact {
-      white-space: nowrap;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Item Details - Campus Connect</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        .status-badge {
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 500;
+            display: inline-block;
+        }
+        .status-lost {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
+        .status-found {
+            background-color: #dcfce7;
+            color: #16a34a;
+        }
+    </style>
 </head>
-<body>
+<body class="bg-light">
+    <%
+        int itemId = Integer.parseInt(request.getParameter("id"));
+        Item item = ItemDAO.getItemById(itemId);
+        if (item == null) {
+            response.sendRedirect("dashboard.jsp");
+            return;
+        }
+    %>
 
-<div class="container py-5">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="dashboard.jsp">Campus Connect</a>
+        </div>
+    </nav>
 
-  <h2 class="mb-4">Item Details</h2>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h2 class="fw-bold mb-0"><%= item.getName() %></h2>
+                            <span class="status-badge <%= item.getType().equals("lost") ? "status-lost" : "status-found" %>">
+                                <%= item.getType().substring(0, 1).toUpperCase() + item.getType().substring(1) %>
+                            </span>
+                        </div>
 
-  <div class="row g-4">
-    <!-- Image Column -->
-    <div class="col-md-5">
-      <img src="https://via.placeholder.com/400x400?text=Backpack" alt="Backpack" class="item-image">
+                        <div class="mb-4">
+                            <h5 class="text-muted mb-3">Description</h5>
+                            <p><%= item.getDescription() %></p>
+                        </div>
+
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h5 class="text-muted mb-3">Location</h5>
+                                <p><i class="bi bi-geo-alt"></i> <%= item.getLocation() %></p>
+                            </div>
+                            <div class="col-md-6">
+                                <h5 class="text-muted mb-3">Date</h5>
+                                <p><i class="bi bi-calendar"></i> <%= item.getDate() %></p>
+                            </div>
+                        </div>
+
+                        <div class="border-top pt-4">
+                            <h5 class="text-muted mb-3">Contact Information</h5>
+                            <p><i class="bi bi-person"></i> <%= item.getUserName() %></p>
+                            <p><i class="bi bi-envelope"></i> <%= item.getUserEmail() %></p>
+                            <a href="mailto:<%= item.getUserEmail() %>" class="btn btn-primary">
+                                Contact Reporter
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- Info Column -->
-    <div class="col-md-7">
-      <h5><strong>Found: Backpack</strong></h5>
-      <p>Found near the library entrance. Black backpack with a water bottle pocket. Contains some textbooks and a notebook.</p>
-      <button class="btn btn-primary btn-contact">Contact Poster</button>
-    </div>
-  </div>
-
-  <!-- Poster Info -->
-  <div class="card-info mt-5">
-    <div class="d-flex align-items-center mb-3">
-      <img src="https://via.placeholder.com/50" class="user-avatar" alt="User">
-      <div>
-        <h6 class="mb-0">Sophia Clark</h6>
-        <small class="text-muted">Computer Science Major</small>
-      </div>
-    </div>
-    <p><strong>Email:</strong> sophia.clark@email.edu</p>
-    <p><strong>Availability:</strong> Available after 5 PM</p>
-  </div>
-
-</div>
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
